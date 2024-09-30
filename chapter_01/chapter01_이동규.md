@@ -229,7 +229,143 @@ const doubleArray = [1, 2, 3].map((item)=>item * 2);
 2. 함수를 작게 만들어야 한다.
 3. 이해할 수 있는 함수명을 붙여야한다.
 
+<br/>
+<br/>
+
 # 1.3 클래스
+## 1.3.1 클래스란 무엇인가?
+
+* 자바스크립트에서 클래스란 특정한 객체를 만들기 위한 일종의 템플릿이다.
+* ES6 이전에는 클래스 개념이 존재하지 않아 클래스 역할을 함수가 대신하였다.
+
+<br/>
+
+> constructor
+* constructor는 객체를 생성하는 데 사용하는 특수한 메서드이다.
+* constructor는 단 하나만 존재할 수 있다.
+* constructor는 생략할 수 있다.
+
+<br/>
+
+> 프로퍼티
+* 프로퍼티는 클래스로 인스턴스를 생성할 떄 내부에 정의할 수 있는 속성값을 의미한다.
+* 인스턴스를 생성할 때 기본적으로 contructor 내부에 할당되어 있는 빈 객체에 프로터티의 키와 값을 넣어 활용할 수 있도록 한다.
+
+<br/>
+
+> getter
+* getter는 클래스에서 어떤 값을 가져올 때 사용된다.
+* getter를 사용하기 위해서는 앞에 get을 붙이고 getter의 이름을 선언해야 한다.
+
+<br/>
+
+```js
+class Car {
+    constructor(name) {
+        this.name = name;
+    }
+
+    get getMyName() {
+        return this.name;
+    }
+}
+```
+
+<br/>
+
+> setter
+* getter는 클래스 필드에 어떤 값을 할당할 때 사용된다.
+* getter를 사용하기 위해서는 앞에 set을 붙이고 setter의 이름을 선언해야 한다.
+
+<br/>
+
+```js
+class Car {
+    constructor(name) {
+        this.name = name;
+    }
+
+    get getMyName() {
+        return this.name;
+    }
+
+    set setMyName(name) {
+        this.name = name;
+    }
+}
+```
+
+<br/>
+
+> 인스턴스 메서드
+* 인스턴스 메서드란 클래스 내부에서 선언한 메서드를 의미한다.
+* 인스턴스 메서드는 프로토타입에 선언된다.
+* 인스턴스 메서드는 프로토타입 메서드라고도 불린다.
+* 프로토 타입 체인을 통해 메서드를 생성된 객체(인스턴스)에 직접 선언하지 않았어도 인스턴스 메서드를 호출할 수 있다.
+
+<br/>
+
+> 프로토타입
+* 프로토타입이란 다른 객체로부터 속성이나 메서드를 상속받을 수 있게 해주는 메커니즘이다.
+* 자바스크립트에서 모든 객체는 prototype이라는 속성을 가지고 있다.
+
+<br/>
+
+> 프로토타입 체인
+* 프로토타입 체인이란 객체가 특정 속성이나 메서드를 찾을 때, 해당 객체에 없으면 상위 프로토타입을 계속 따라가면서 찾는 상속 메커니즘이다.
+* 프로토타입 체인을 통해 인스턴스가 인스턴스 메서드에 접근할 수 있다.
+* Object.getPrototypeOf()를 통해 객체의 프로토타입을 확인할 수 있다.
+
+<br/>
+
+```js
+class Person {
+  constructor(name) {
+    this.name = name;
+  }
+
+  sayHello() {
+    console.log(`Hello, my name is ${this.name}`);
+  }
+}
+
+const person1 = new Person('John');
+person1.sayHello();  // "Hello, my name is John"
+
+/** 
+ * Person은 클래스이다.
+ * person1은 Person 클래스의 인스턴스이다.
+ * sayHello는 Person 클래스의 프로토타입 메서드로 정의된다.
+*/
+
+/** 
+ * person1은 Person.prototype을 상속받는다.
+ * Person.prototype은 Object.prototype을 상속받는다.
+ * Object.prototype은 최상위 부모이다.
+*/
+
+```
+
+<br/>
+
+> 정적 메서드
+* 정적 메서드란 클래스의 인스턴스가 아닌 이름으로 호출할 수 있는 메서드이다.
+* 정적 메서드 내부의 this는 인스턴스가 아닌 클래스 자신을 가리킨다.
+
+<br/>
+
+> 상속
+* 상속이란 기존 클래스를 기반으로 확장하는 개념이다.
+
+<br/>
+
+## 1.3.2 클래스와 함수의 관계
+* 클래스에서 인스턴스 메서드가 자동으로 프로토타입에 선언되는 것은 함수에서 프로토타입에 함수를 직접 할당하여 구현한다.
+* 클래스에서 정적 메서드는 함수에서 메서드를 직접할당하여 구현한다.
+* 클래스에서의 getter와 setter는 함수에서 객체에 속성을 직접 정의하여 구현한다.
+
+<br/>
+<br/>
 
 # 1.4 클로저
 
