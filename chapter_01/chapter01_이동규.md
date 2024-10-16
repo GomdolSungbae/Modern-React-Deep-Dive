@@ -838,4 +838,152 @@ function Component({condition}) {
 
 
 # 1.7 선택이 아닌 필수, 타입스크립트
+* 타입스크립트란 기존 자바스크립트 문법에 타입을 가미한 것이다.
+* 타입스크립트를 사용하면 동적 언어인 JS에서 런타임에만 타입을 체크할 수 있는 한계를 극복할 수 있어 더욱 안정적이고 잠재적인 버그를 크게 줄일 수 있다.
+* 최근 런타임(Deno, Bum)들도 타입스크립트를 지원한다.
+* 현업에서도 대부분 타입스크립트로 개발한다.
+
+<br/>
+
+## 1.7.1 타입스크립트란?
+```js
+function test(a, b) {
+    return a / b;
+}
+
+test(5, 2) // 2.5
+test("안녕", "하이") // NaN
+```
+
+위 예시코드에서 test 함수에 올바른 인수를 전달하지 않았다.<br/>
+이에 개발자가 원하지 않은 결과를 만들어 낸다.<br/>
+이를 자바스크립트에서 타입을 체크하여 방지할 수 있다.<br/>
+그러나 모든 함수, 변수에 타입 확인 연산자 typeof를 적용해 타입체크를 하게되면 너무 번거롭고 코드 크기가 과도하게 커지는 단점이 있다.<br/>
+타입스크립트는 이러한 자바스크립트의 한계를 벗어나 빌드 타임에 타입 체크를 정적으로 수행할 수 있도록 한다.<br/>
+위 예시코드를 아래와 같이 간결한 타입스크립트 코드로 바꿀 수 있다.<br/>
+
+```ts
+function test(a: number, b: number) {
+    return a / b;
+}
+
+// js 와는 다르게 ts에서는 아래 코드는 타입 에러를 발생시킨다.
+test("안녕", "하이");  // 런타임까지 가지 않아도 빌드 시점에 에러를 확인할 수 있다.
+```
+
+<br/>
+<br/>
+
+## 1.7.2 타입스크립트 활용법
+
+> any 대신 unknown 사용하기
+TS 초보자가 자주 저지르는 실수 중 하나는 any의 남용이다.<br/>
+any는 정말 불가피할 때만 사용해야 하는 타입이며 any를 사용한다는 것은 사실상 TS의 정적 타이핑의 이점을 모두 버리는 것이나 다름없다.
+<br/>
+불가피하게 타입을 단정할 수 없다면 unknown을 사용하는 것이 좋다.<br/>
+하지만 any와는 다르게 unknown 타입의 값은 바로 사용하는 것이 불가능하다.<br/>
+unknown을 사용하기 위해서는 type narrowing을 적용하여야한다. <br/>
+type narrowing을 적용하면 원하는 타입일 때만 의도대로 작동하도록 할 수 있다.<br/>
+이렇게 unknown을 사용하면 예상치 못한 타입을 받아들일 수 있고 any 보다 안전하게 사용할 수 있다.
+
+```ts
+// 즉시 사용 불가
+function test(callback: unknown) {
+    callback(); // 'callback' is of type 'unknown' 에러 발생
+}
+```
+
+```ts
+// type narrowing 적용 (타입 좁히기)
+function test(callback: unknown) {
+    if(typeof callback == 'function') {
+        callback();
+    }
+}
+```
+
+<br/>
+
+unknown과 반대되는 never가 있다.<br/>
+never를 사용하면 어떠한 타입도 들어올 수 없다.<br/>
+코드상 존재가 불가능한 타입을 나타낼 때 never가 사용된다.<br/>
+
+```ts
+// 아래 타입은 존재할 수 없는 타입이기 때문에 never가 선언된다.
+type what1 = string & number;
+type what2 = ('hello' | 'hi') & 'react';
+```
+
+<br/>
+
+> 타입 가드
+unknown 타입 예제에서 살펴봤듯이 type narrowing은 매우 중요하다.
+이러한 type narrowing에 도움을 주는 것이 타입 가드이다.
+조건문과 타입가드를 함께 사용하면 타입을 효과적으로 좁힐 수 있다.
+
+<br/>
+
+> 제네릭
+제네릭은 함수나 클래스 내부에서 단일 타입이 아닌 다양한 타입에 대응할 수 있도록 돕는 도구이다.
+
+```ts
+function test<T>(list: T[]): [T, T] {
+    return [list[0], list[1]]; // 매개변수 배열의 첫번째 요소 두번째 요소를 배열에 담아 반환
+}
+
+const [first, second] = test([1,2,3]);
+
+// first 타입 = number
+// second 타입 = number
+
+const [first, second] = test(['a', 'b', 'c']);
+// first 타입 = string
+// second 타입 = string
+```
+
+T라는 제네릭을 선언해 이를 각각 배열의 요소와 반환 값의 요소로 사용했다.<br/>
+제네릭 덕분에 다양한 타입을 처리할 수 있는 함수를 만들 수 있다.<br/>
+
+리액트에서 제네릭을 사용할 수 있는 코드 중에는 useState가 있다.<br/>
+useState에 제네릭으로 타입을 선언한다면 state 사용과 기본값 선언을 좀 더 명확하게 할 수 있다.
+<br/>
+흔히 useState() 같은 형식으로 기본값을 넘기지 않는 경우가 많은데 이럴 경우 값을 undefined로 추론해 버리는 문제가 발생한다.
+<br/>
+재네릭으로 기본값을 선언해 준다면 이러한 문제를 TS가 방지한다.
+
+
+```ts
+function Conponent() {
+    const [state, setState] = useState<string>('');
+    // ...
+}
+```
+
+<br/>
+
+제네릭은 하나 이상 사용할 수 있다.
+```ts
+function test<First, Last>(a1: First, a2: Last): [First, Last] {
+    return [a1, a2];
+}
+
+const [a, b] = test<string, boolean>('hello', true);
+
+// a string
+// b boolean
+```
+
+<br/>
+
+> 인덱스 시그니처
+...추후 학습
+
+
+<br/>
+<br/>
+
+## 1.7.3 타입스크립트 전환 가이드
+* tsconfig.json 작성하기
+* @types 모듈 설치하기
+* 파일 단위로 조금씩 전환하기
 
